@@ -41,7 +41,7 @@ const run = async () => {
   // Consuming
   await consumerRawData.connect();
   console.info("Connected to Kafka Broker.");
-  await consumerRawData.subscribe({ topic: "input", fromBeginning: false });
+  await consumerRawData.subscribe({ topic: process.env.SUBSCRIBE_TOPIC, fromBeginning: false });
 
   consumerRawData.run({
     eachMessage: async ({ topic, partition, message }) => {
