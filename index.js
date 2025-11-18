@@ -10,15 +10,15 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 // Optional SSL configuration (load certs if provided)
-let sslConfig = false; // Default: no SSL
-if (process.env.KAFKA_SSL === "true") {
-  sslConfig = {
-    rejectUnauthorized: process.env.KAFKA_SSL_REJECT_UNAUTHORIZED !== "false", // default true
-    ca: process.env.KAFKA_CA_PATH ? [fs.readFileSync(process.env.KAFKA_CA_PATH, "utf-8")] : undefined,
-    key: process.env.KAFKA_KEY_PATH ? fs.readFileSync(process.env.KAFKA_KEY_PATH, "utf-8") : undefined,
-    cert: process.env.KAFKA_CERT_PATH ? fs.readFileSync(process.env.KAFKA_CERT_PATH, "utf-8") : undefined,
-  };
-}
+// let sslConfig = false; // Default: no SSL
+// if (process.env.KAFKA_SSL === "true") {
+//   sslConfig = {
+//     rejectUnauthorized: process.env.KAFKA_SSL_REJECT_UNAUTHORIZED !== "false", // default true
+//     ca: process.env.KAFKA_CA_PATH ? [fs.readFileSync(process.env.KAFKA_CA_PATH, "utf-8")] : undefined,
+//     key: process.env.KAFKA_KEY_PATH ? fs.readFileSync(process.env.KAFKA_KEY_PATH, "utf-8") : undefined,
+//     cert: process.env.KAFKA_CERT_PATH ? fs.readFileSync(process.env.KAFKA_CERT_PATH, "utf-8") : undefined,
+//   };
+// }
 
 const kafka = new Kafka({
   clientId: "test-kafka-app-" + Date.now(), // unique ID per instance
@@ -26,7 +26,6 @@ const kafka = new Kafka({
     process.env.KAFKA_BOOTSTRAP_SERVER_URL ||
       "my-cluster-kafka-bootstrap.kafka:9092",
   ],
-  ssl: sslConfig, // <-- SSL enabled here
   sasl: {
     mechanism: "scram-sha-512",
     username: process.env.KAFKA_USERNAME,
@@ -61,6 +60,7 @@ const run = async () => {
       try {
         const payLoadParsed = JSON.parse(message.value.toString());
         console.log("Payload:", payLoadParsed);
+        console.log("Publish Data:",JSON.stringify(payLoadParsed));
       } catch (e) {
         console.error("❌ Invalid JSON:", e.toString());
       }
